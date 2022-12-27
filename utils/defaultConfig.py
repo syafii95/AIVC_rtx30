@@ -161,8 +161,12 @@ defaultConfig={
     "FORMER_MARKING_DISTANCE":[10,10,10,10],
     "ENABLE_FORMER_MARKING":True,
     "CHAIN_ANCHOR_OFFSET":[0,0,0,0],
-    "ENABLE_RASM_TAB":True,
-    "RASM_TEST_IMAGE": "C:/Users/E/Desktop/Syafii/imageTestRASM",
-    "FKTH_TEST_IMAGE": "C:/Users/E/Desktop/Syafii/imageTestFKTH",
-    "TAC_TEST_IMAGE": "C:/Users/E/Desktop/Syafii/imageTestTAC",
+    "COUNTER_INSTALLED": True,
+    "FORMER_COUNTER_OFFSET": [
+        0,
+        0,
+        0,
+        0
+    ],
+    "ENABLE_HTTP": False,
 }

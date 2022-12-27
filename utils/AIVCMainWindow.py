@@ -274,6 +274,11 @@ class Ui_AIVCMainWindow(object):
         self.text_aveLineSpeed = QtWidgets.QLabel(self.CentralWidget)
         self.text_aveLineSpeed.setObjectName("text_aveLineSpeed")
         self.gridLayout_2.addWidget(self.text_aveLineSpeed, 11, 2, 1, 1)
+
+        self.text_aveProbFormer = QtWidgets.QLabel(self.CentralWidget)
+        self.text_aveProbFormer.setObjectName("text_aveProbFormer")
+        self.gridLayout_2.addWidget(self.text_aveProbFormer, 13, 2, 1, 1)
+
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.btn_start = QtWidgets.QPushButton(self.CentralWidget)
@@ -332,6 +337,18 @@ class Ui_AIVCMainWindow(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         spacerItem3 = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
+        # syafii edit
+        self.btn_model = QtWidgets.QPushButton(self.CentralWidget)
+        self.btn_model.setMinimumSize(QtCore.QSize(33, 33))
+        self.btn_model.setMaximumSize(QtCore.QSize(33, 33))
+        self.btn_model.setText("")
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/utils/icons//brain2.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_model.setIcon(icon9)
+        self.btn_model.setIconSize(QtCore.QSize(26, 26))
+        self.btn_model.setObjectName("btn_model")
+        self.horizontalLayout_4.addWidget(self.btn_model)
+        # syafii edit
         self.btn_plc = QtWidgets.QPushButton(self.CentralWidget)
         self.btn_plc.setMinimumSize(QtCore.QSize(33, 33))
         self.btn_plc.setMaximumSize(QtCore.QSize(33, 33))
@@ -427,6 +444,7 @@ class Ui_AIVCMainWindow(object):
         self.select_duration.addItem("")
         self.select_duration.addItem("")
         self.select_duration.addItem("")
+        self.select_duration.addItem("")
         self.gridLayout_2.addWidget(self.select_duration, 9, 1, 1, 1)
         self.listWidget = QtWidgets.QListWidget(self.CentralWidget)
         self.listWidget.setMinimumSize(QtCore.QSize(0, 90))
@@ -476,6 +494,11 @@ class Ui_AIVCMainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.CentralWidget)
         self.label_2.setObjectName("label_2")
         self.gridLayout_2.addWidget(self.label_2, 11, 1, 1, 1)
+
+        self.label_6 = QtWidgets.QLabel(self.CentralWidget)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout_2.addWidget(self.label_6, 13, 1, 1, 1)
+
         spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem5, 13, 1, 1, 1)
         self.horizontalLayout_2.addLayout(self.gridLayout_2)
@@ -562,6 +585,7 @@ class Ui_AIVCMainWindow(object):
         item.setText(_translate("AIVCMainWindow", "0"))
         self.table_defect_data.setSortingEnabled(__sortingEnabled)
         self.text_aveLineSpeed.setText(_translate("AIVCMainWindow", "--"))
+        #self.text_aveProbFormer.setText(_translate("AIVCMainWindow", "--"))
         self.btn_start.setText(_translate("AIVCMainWindow", "Stop Capturing"))
         self.btn_label.setText(_translate("AIVCMainWindow", "Label"))
         self.label.setText(_translate("AIVCMainWindow", "Defect Data"))
@@ -574,11 +598,13 @@ class Ui_AIVCMainWindow(object):
         self.select_duration.setItemText(0, _translate("AIVCMainWindow", "Start"))
         self.select_duration.setItemText(1, _translate("AIVCMainWindow", "Day"))
         self.select_duration.setItemText(2, _translate("AIVCMainWindow", "Hour"))
-        self.select_duration.setItemText(3, _translate("AIVCMainWindow", "15 minute"))
-        self.select_duration.setItemText(4, _translate("AIVCMainWindow", "Minute"))
+        self.select_duration.setItemText(3, _translate("AIVCMainWindow", "30 minute"))
+        self.select_duration.setItemText(4, _translate("AIVCMainWindow", "15 minute"))
+        self.select_duration.setItemText(5, _translate("AIVCMainWindow", "Minute"))
         self.label_user.setText(_translate("AIVCMainWindow", "User"))
         self.label_clock.setText(_translate("AIVCMainWindow", "DD/MM/YYYY HH:MM:SS"))
         self.label_2.setText(_translate("AIVCMainWindow", "Average Line Speed:"))
+        #self.label_6.setText(_translate("AIVCMainWindow", "Average Prob. Former:"))
 
 
 import utils.icons
