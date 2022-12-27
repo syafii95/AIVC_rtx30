@@ -32,6 +32,7 @@ TIMER_10MS_ADDR=3076		#M1028
 ENCODER_ADDR=3829			#C245 (3784+45) X4 Encoder
 ENCODER_LATCH_ADDR=4386		#D290
 HIGH_DEFECT_FORMER_ADDR=2998	#M950
+FORMER_COUNTING=6096			#D2000
 
 class HalfmoonPLC():
 	def __init__(self, ip):
@@ -70,6 +71,7 @@ class PLC():
 	timeSpan=0
 	connected=False
 	prev_res=0
+
 	def __init__(self, ip,sensorAddr=0,periSensorAddr=50,periSignalAddr=900,aivcMode=0):
 		#ip should be 10.39.0.2
 		self.client = ModbusTcpClient(ip)
@@ -219,6 +221,26 @@ class PLC():
 		else:
 			return -1	#no connection
 
+	def formerCounting(self,formerID,camSeq):
+		if self.connected:
+			for ele, data in enumerate(formerID):
+				if camSeq == 8: # Left In Side
+					#print(f'This is PLC address: {FORMER_COUNTING+ele} | Data write: {data} | Camera Sequence: {camSeq}')
+					self.client.write_register(FORMER_COUNTING+ele,data)
+
+				elif camSeq == 9: # Left Out Side
+					#print(f'This is PLC address: {FORMER_COUNTING+ele+4} | Data write: {data} | Camera Sequence: {camSeq}')
+					self.client.write_register(FORMER_COUNTING+ele+8,data)
+				
+				elif camSeq == 10: # Right In Side
+					#print(f'This is PLC address: {FORMER_COUNTING+ele+4} | Data write: {data} | Camera Sequence: {camSeq}')
+					self.client.write_register(FORMER_COUNTING+ele+4,data)
+
+				elif camSeq == 11: # Right Out Side
+					#print(f'This is PLC address: {FORMER_COUNTING+ele+4} | Data write: {data} | Camera Sequence: {camSeq}')
+					self.client.write_register(FORMER_COUNTING+ele+12,data)
+
+
 	def setDualBinFlap(self,side,val):
 		if self.connected:
 			if val:
@@ -248,6 +270,7 @@ class PLC():
 	def sendFormerMarkingSignal(self,side):
 		if self.connected:
 			self.client.write_coil(HIGH_DEFECT_FORMER_ADDR+self.aivcMode*10+side, True)
+			#self.client.write_coil(HIGH_DEFECT_FORMER_ADDR+self.aivcMode*10+side, False)
 
 	def rejectAsm(self,side,num):#LI:M600~605, RI:M610~615, LO:M620~625, RO:M630~635
 		if self.connected:
