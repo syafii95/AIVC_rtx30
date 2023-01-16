@@ -29,7 +29,7 @@ import cv2
 import numpy as np
 # os.add_dll_directory('')
 os.add_dll_directory(os.path.dirname(__file__))
-print(os.path.dirname(__file__))
+#print(os.path.dirname(__file__))
 
 
 class BOX(Structure):
@@ -102,7 +102,7 @@ def class_colors(names):
         random.randint(0, 255)) for name in names}
 
 
-def load_network(config_file, data_file, weights, batch_size):
+def load_network(config_file, clsNum, weights, batch_size):
     """
     load model description and weights from config files
     args:
@@ -117,9 +117,7 @@ def load_network(config_file, data_file, weights, batch_size):
     network = load_net_custom(
         config_file.encode("ascii"),
         weights.encode("ascii"), 0, batch_size)
-    metadata = load_meta(data_file.encode("ascii"))
-    #class_names = [metadata.names[i].decode("ascii") for i in range(metadata.classes)]
-    class_names = [i for i in range(metadata.classes)]
+    class_names = [i for i in range(clsNum)]
     colors = class_colors(class_names)
     return network, class_names, colors
 
@@ -170,7 +168,6 @@ def remove_negatives(detections, class_names, num):
 
 def scaleBboxes(bboxes,input_size,frame):
     frameH, frameW, ch = frame.shape
-    #print(f'$$$$$ {frameH, frameW}')
     listBbox=[]
     for i in bboxes:
         left, top, right, bottom = bbox2points((i[0],i[1],i[2],i[3]))
@@ -178,7 +175,6 @@ def scaleBboxes(bboxes,input_size,frame):
         i[1] = top/input_size*frameH
         i[2] = right/input_size*frameW
         i[3] = bottom/input_size*frameH
-        #print(f'---- Ele --- {ele} ----')
         listBbox.append(i)
 
         if len(bboxes) > 0:
@@ -238,7 +234,6 @@ def batch_detection(network, images, class_names, class_colors,
 
     image_height, image_width, _ = check_batch_shape(images, batch_size)
     darknet_images = prepare_batch(images, network)
-    print(darknet_images)
     batch_detections = network_predict_batch(network, darknet_images, batch_size, image_width,
                                                      image_height, thresh, hier_thresh, None, 0, 0)
     batch_predictions = []
@@ -266,7 +261,6 @@ if os.name == "nt":
     winGPUdll = "yolo_cpp_dll.dll"
     
     #winGPUdll = os.path.join(cwd, "yolo_cpp_dll.dll")
-    print(winGPUdll)
     winNoGPUdll = os.path.join(cwd, "yolo_cpp_dll_nogpu.dll")
     envKeys = list()
     for k, v in os.environ.items():
