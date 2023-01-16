@@ -1,7 +1,7 @@
 import sys
 import os
 from cx_Freeze import setup, Executable
-files = ["core", "color_mask_threshold.txt", "data","classes.names", "Login.ini", "aivcMonitor","lib","coco.data","yolo_cpp_dll.dll","yolov3.cfg","zlibwapi.dll","yolov3_glove.weights","cublas64_10.dll","cublasLt64_10.dll","cudart64_101.dll","cudnn64_7.dll","cufft64_10.dll","curand64_10.dll","cusolver64_10.dll","cusparse64_10.dll","config.json","mkl_core.dll","mkl_def.dll","mkl_intel_thread.dll","mkl_mc3.dll"]
+files = ["core", "color_mask_threshold.txt", "data","classes.names", "Login.ini", "aivcMonitor","lib","yolo_cpp_dll.dll","yolov3.cfg","zlibwapi.dll","yolov3_glove.weights","cublas64_10.dll","cublasLt64_10.dll","cudart64_101.dll","cudnn64_7.dll","cufft64_10.dll","curand64_10.dll","cusolver64_10.dll","cusparse64_10.dll","config.json","mkl_core.dll","mkl_def.dll","mkl_intel_thread.dll","mkl_mc3.dll"]
 exFiles = ["matplotlib.tests", "numpy.random._examples"]
 
 target = Executable(
