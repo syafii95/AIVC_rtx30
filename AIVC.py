@@ -265,73 +265,20 @@ def convertToAscii(strID):
     numElement=48
     listDecimal=[12288,12544,12800,13056,13312,13568,13824,14080,14336,14592]
     for element in strID:
-        if element == '0':
-            numElement=48
-        elif element == '1':
-            numElement=49
-        elif element == '2':
-            numElement=50
-        elif element == '3':
-            numElement=51
-        elif element == '4':
-            numElement=52
-        elif element == '5':
-            numElement=53
-        elif element == '6':
-            numElement=54
-        elif element == '7':
-            numElement=55
-        elif element == '8':
-            numElement=56
-        elif element == '9':
-            numElement=57
-        
+        if element == element:
+            numElement = 48 + int(element)
+
         elementAppend.append(numElement)
         if len(elementAppend) == len(strID):
-            if elementAppend[2] == 48:
-                elementAppend[2] = listDecimal[0]
-            elif elementAppend[2] == 49:
-                elementAppend[2] = listDecimal[1]
-            elif elementAppend[2] == 50:
-                elementAppend[2] = listDecimal[2]
-            elif elementAppend[2] == 51:
-                elementAppend[2] = listDecimal[3]
-            elif elementAppend[2] == 52:
-                elementAppend[2] = listDecimal[4]
-            elif elementAppend[2] == 53:
-                elementAppend[2] = listDecimal[5]
-            elif elementAppend[2] == 54:
-                elementAppend[2] = listDecimal[6]
-            elif elementAppend[2] == 55:
-                elementAppend[2] = listDecimal[7]
-            elif elementAppend[2] == 56:
-                elementAppend[2] = listDecimal[8]
-            elif elementAppend[2] == 57:
-                elementAppend[2] = listDecimal[9]
+            if elementAppend[2] == elementAppend[2]:
+                elementAppend[2] = listDecimal[int(elementAppend[2])-48]
 
-            if elementAppend[0] == 48:
-                elementAppend[0] = listDecimal[0]
-            elif elementAppend[0] == 49:
-                elementAppend[0] = listDecimal[1]
-            elif elementAppend[0] == 50:
-                elementAppend[0] = listDecimal[2]
-            elif elementAppend[0] == 51:
-                elementAppend[0] = listDecimal[3]
-            elif elementAppend[0] == 52:
-                elementAppend[0] = listDecimal[4]
-            elif elementAppend[0] == 53:
-                elementAppend[0] = listDecimal[5]
-            elif elementAppend[0] == 54:
-                elementAppend[0] = listDecimal[6]
-            elif elementAppend[0] == 55:
-                elementAppend[0] = listDecimal[7]
-            elif elementAppend[0] == 56:
-                elementAppend[0] = listDecimal[8]
-            elif elementAppend[0] == 57:
-                elementAppend[0] = listDecimal[9]
+            if elementAppend[0] == elementAppend[0]:
+                elementAppend[0] = listDecimal[int(elementAppend[0])-48]
             
             elementAppendFinish = np.copy(elementAppend)
             elementAppend.clear()
+            
     return elementAppendFinish
 
 class ShiftCounter():
@@ -2573,28 +2520,10 @@ class Inference_Thread(QThread):
     def __init__(self, parent, cfg):
         super().__init__(parent=parent)
         self.occu=OccuAnalyzer(self.__class__.__name__,100)
-        
-        """input_layer  = tf.keras.layers.Input([FIXED_INPUT_SIZE, FIXED_INPUT_SIZE, 3])
-        feature_maps = YOLOv3(input_layer)
-
-        bbox_tensors = []
-        for i, fm in enumerate(feature_maps):
-            bbox_tensor = decode(fm, i)
-            bbox_tensors.append(bbox_tensor)
-
-        self.model = tf.keras.Model(input_layer, bbox_tensors)
-        utils.load_weights(self.model, "./yolov3_glove.weights")
-
-        #model.summary()
-        dummyArray=np.zeros((1,FIXED_INPUT_SIZE,FIXED_INPUT_SIZE,3))
-        dummy_bbox = self.model.predict_on_batch(dummyArray)#Fire first inference to warm up (first inference is slow)"""
-
-        
         config_file = cfg
-        data_file = "coco.data"
         weights = "yolov3_glove.weights"
         batch_size=1
-        self.network, self.class_names, self.class_colors = darknet.load_network(config_file,data_file,weights,batch_size)
+        self.network, self.class_names, self.class_colors = darknet.load_network(config_file,CLASS_NUM,weights,batch_size)
         width = darknet.network_width(self.network) # return 416 based on what we set in config
         height = darknet.network_height(self.network) # return 416 based on what we set in config
         self.darknet_image = darknet.make_image(width, height, 3)
@@ -2609,12 +2538,9 @@ class Inference_Thread(QThread):
     def batchProcessYolo(self):
         self.occu.start()
         images_data=[p[0] for p in self.payload]
-        #print(f'=====> {images_data} <======')
         images_data=np.vstack(images_data)
-        #print(f'=====> {images_data} <======')
         t=time.time()
         try:
-            #pred_bboxes = self.model.predict_on_batch(images_data)
             if self.payload[0][0]:
                 bboxes = darknet.detect_image(self.network, self.class_names, images_data[0][0], thresh=0.25)
             
@@ -2632,7 +2558,6 @@ class Inference_Thread(QThread):
                 camSeq, frame, image_resized, formerID, isRasmAnchor= self.captureQue.get(timeout=0.1) 
             except q.Empty:
                 if self.inferenceRunning and self.payload: #not empty
-                    #print(f'BATCH_SIZE:{CFG.BATCH_SIZE}, images intake: {len(self.payload)}')
                     self.batchProcessYolo()
                 continue
             if frame is None:#Clear Cam View
@@ -2641,7 +2566,6 @@ class Inference_Thread(QThread):
             darknet.copy_image_from_bytes(self.darknet_image, image_resized.tobytes())
             self.payload.append([[self.darknet_image], camSeq, frame, formerID, isRasmAnchor]) #store img for batch prediction
             if len(self.payload)==CFG.BATCH_SIZE:#Straight go prediction if batch_size reached
-                #print(f'========> {self.payload[0][0]} <========')
                 self.batchProcessYolo()
         self.captureQue.queue.clear()
         print("Inference Thread Closed")
@@ -2687,7 +2611,6 @@ class MainWindow(QMainWindow):
                 self.ui.table_defect_data.setItem(i+4, j, item)
 
         self.ui.label_title.setText(f'Integrated AIVC System  {CFG.FACTORY_NAME} LINE {CFG.LINE_NUM}')
-        #self.ui.label_title.setText(f'AIVC System DEVELOPER MODE DO NOT CLOSED')
         self.ui.label_version.setText(f'RTX30 Series')
         self.ui.select_duration.currentIndexChanged.connect(self.changeRecordDuration)
         self.camBoxes=[CamBox(i) for i in range(MAX_CAM_NUM)]
@@ -2774,8 +2697,7 @@ class MainWindow(QMainWindow):
         self.tableDialog=TableDialog(self)
         self.plcDialog=PLCDialog(self,self.plc)
         self.dataHistoryDialog=DataHistoryDialog(self)
-        self.modelLowConfident=ModelLowConfident(self)# syafii edit
-        #self.dataThread.lowConfData.connect(self.modelLowConfident.display)# syafii edit
+        self.modelLowConfident=ModelLowConfident(self)
         self.dataThread.modelPerformanceHandler.lowConfData.connect(self.modelLowConfident.display)
         self.infoDialog=InfoDialog(self)
         for rcw in self.infoDialog.rejectCountWidgets:
@@ -2964,7 +2886,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_history.clicked.connect(self.showDataHistory)
         #self.ui.btn_login.clicked.connect(self.changeAIVCMode)#H#
         self.ui.btn_plc.clicked.connect(self.showPLC)
-        self.ui.btn_model.clicked.connect(self.showModelLowConfident)# syafii edit
+        self.ui.btn_model.clicked.connect(self.showModelLowConfident)
         self.ui.btn_info.clicked.connect(self.showInfo)
         self.ui.btn_exit.clicked.connect(self.close)
 
@@ -3014,11 +2936,6 @@ class MainWindow(QMainWindow):
             self.infoDialog.purgingDisplays[side].takeItem(0)
             self.infoDialog.purgingDisplays[side].scrollToBottom()
 
-        # matchedItems=self.infoDialog.purgingDisplays[side].findItems(f'{formerID:03d}',Qt.MatchContains)
-        # for item in matchedItems:
-        #     item.setBackground( QColor('Blue'))
-        #     item.setText(item.text()+'  Detected')
-
     def markPurged(self,side,formerID):
         item=QListWidgetItem(f'Purged {formerID:03d}',self.infoDialog.purgingDisplays[side])
         item.setBackground( QColor('Red'))
@@ -3057,7 +2974,7 @@ class MainWindow(QMainWindow):
     def showDataHistory(self):
         self.dataHistoryDialog.show()
 
-    def showModelLowConfident(self):# syafii edit
+    def showModelLowConfident(self):
         self.modelLowConfident.show()
 
     def showPLC(self):
@@ -3112,7 +3029,6 @@ class MainWindow(QMainWindow):
             for i in range(4):
                 self.ui.grid_rasm_cam.addWidget(self.camBoxes[i+8], i/2,i%2, 1, 1)
             self.ui.label_title.setText(f'Integrated AIVC System  {CFG.FACTORY_NAME} LINE {CFG.LINE_NUM}')
-            #self.ui.label_title.setText(f'AIVC System DEVELOPER MODE DO NOT CLOSED')
             for pf in self.purgerforms:
                 for i in range(1,4):
                     pf.itemAt(i,QFormLayout.FieldRole).widget().show()
@@ -3363,11 +3279,6 @@ class MainWindow(QMainWindow):
         CFG_Handler.set('PERI_CLASS', CFG.PERI_CLASS)
 
     def changeFactorynLineName(self):
-        # if self.text_factory.text() in FACTORY_LIST:
-        #     CFG.FACTORY_NAME=self.text_factory.text()
-        # else:
-        #     print(f"{self.text_factory.text()} is not a valid factory name")
-        #     self.text_factory.setText([CFG.FACTORY_NAME])
         CFG_Handler.set('FACTORY_NAME',self.text_factory.text()) 
         CFG_Handler.set('LINE_NUM',self.text_line.val) 
         self.ui.label_title.setText(f'Integrated AIVC System  {CFG.FACTORY_NAME} LINE {CFG.LINE_NUM}')
@@ -4072,14 +3983,12 @@ class DefectionGrid(QWidget):
             arm.armClicked.connect(self.parent.armClicked)
             self.gridLayout.addWidget(arm,int(itemNum/10),itemNum%10)
             self.items.append(arm)
-            #self.updateArm(rasmID1-1, rasmID1, armRecord, lab, highlight=True)
             self.updateArm(rasmID1-1, rasmID1, armRecord, side, False, cycleRasm, contBad, contGood, lab, encod=encod, highlight=True)
         else:
             if(rasmID1==1):
                 self.items[-1].setStyleSheet(f"QLabel {{background-color: {self.preColor}; border: 2px solid black; border-radius: 5px;}}")
             else:
                 self.items[rasmID1-2].setStyleSheet(f"QLabel {{background-color: {self.preColor}; border: 2px solid black; border-radius: 5px;}}")
-            #self.updateArm(rasmID1-1, rasmID1, armRecord, lab, highlight=True)#for RASM ID is the same as index
             self.updateArm(rasmID1-1, rasmID1, armRecord, side, False, cycleRasm, contBad, contGood, lab, encod=encod, highlight=True)#for RASM ID is the same as index
 
     def updateAllChain(self, gloveDefectionRecord,clear=False):
@@ -4292,7 +4201,6 @@ class ModelLowConfident(QDialog): # syafii edit, add new classes
         self.table.setColumnWidth(2,100)
         self.resize(vLayout.sizeHint().width(),vLayout.sizeHint().height())
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        #self.table.setMinimumSize(QSize(710, 600))
         self.resize(470,420)
          
     def display(self,appendData,classData,differentDataRate):
